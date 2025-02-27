@@ -1,0 +1,52 @@
+class TicketBookingSystem {
+    private int availableSeats = 5; // Total available seats
+
+    public synchronized boolean bookSeat(String customerName) {
+        if (availableSeats > 0) {
+            System.out.println(customerName + " successfully booked a seat.");
+            availableSeats--;
+            return true;
+        } else {
+            System.out.println(customerName + " failed to book a seat. No seats available.");
+            return false;
+        }
+    }
+}
+
+class Customer extends Thread {
+    private TicketBookingSystem bookingSystem;
+    private String customerName;
+
+    public Customer(TicketBookingSystem bookingSystem, String customerName, int priority) {
+        this.bookingSystem = bookingSystem;
+        this.customerName = customerName;
+        setPriority(priority); // Setting priority for thread
+    }
+
+    @Override
+    public void run() {
+        bookingSystem.bookSeat(customerName);
+    }
+}
+
+public class TicketBookingApp {
+    public static void main(String[] args) {
+        TicketBookingSystem bookingSystem = new TicketBookingSystem();
+
+        // Creating threads for customers
+        Customer vip1 = new Customer(bookingSystem, "VIP Customer 1", Thread.MAX_PRIORITY);
+        Customer vip2 = new Customer(bookingSystem, "VIP Customer 2", Thread.MAX_PRIORITY);
+        Customer normal1 = new Customer(bookingSystem, "Normal Customer 1", Thread.NORM_PRIORITY);
+        Customer normal2 = new Customer(bookingSystem, "Normal Customer 2", Thread.NORM_PRIORITY);
+        Customer normal3 = new Customer(bookingSystem, "Normal Customer 3", Thread.NORM_PRIORITY);
+        Customer normal4 = new Customer(bookingSystem, "Normal Customer 4", Thread.NORM_PRIORITY);
+
+        // Starting threads
+        vip1.start();
+        vip2.start();
+        normal1.start();
+        normal2.start();
+        normal3.start();
+        normal4.start();
+    }
+}
